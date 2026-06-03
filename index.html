@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservierung – Thorn Immobilien</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1A3A5C;
+      --gold:  #B8963E;
+      --light: #F5F7FA;
+      --text:  #1C1C1C;
+      --muted: #6B7280;
+      --border: #D1D5DB;
+      --green: #16A34A;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--light);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--navy);
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header .brand { color: #fff; font-size: 20px; font-weight: 700; letter-spacing: .5px; }
+    header .brand span { color: var(--gold); }
+    header .sub { color: #94A3B8; font-size: 13px; margin-top: 2px; }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 720px;
+      margin: 40px auto;
+      padding: 0 16px 60px;
+    }
+
+    /* ── Object card ── */
+    .object-card {
+      background: var(--navy);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+      color: #fff;
+    }
+    .object-card .label {
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .object-card h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .object-card .location {
+      color: #94A3B8;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .kpi { background: rgba(255,255,255,0.07); border-radius: 8px; padding: 14px 16px; }
+    .kpi .kpi-label { color: #94A3B8; font-size: 11px; margin-bottom: 4px; }
+    .kpi .kpi-value { color: #fff; font-size: 18px; font-weight: 700; }
+    .kpi .kpi-value.gold { color: var(--gold); }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Form ── */
+    .form-section { background: #fff; border-radius: 12px; padding: 28px 32px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .form-section h3 { font-size: 17px; font-weight: 700; margin-bottom: 20px; color: var(--navy); }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 5px; }
+    input, select, textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 13px;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+      transition: border-color .15s;
+      font-family: Arial, sans-serif;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--navy);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* hidden inputs */
+    input[type="hidden"] { display: none; }
+
+    /* ── Consent ── */
+    .consent {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .consent input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: var(--navy);
+    }
+
+    /* ── Submit ── */
+    .btn-submit {
+      display: block;
+      width: 100%;
+      margin-top: 24px;
+      padding: 14px;
+      background: var(--gold);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      letter-spacing: .3px;
+      transition: background .15s;
+    }
+    .btn-submit:hover { background: #a07d32; }
+
+    /* ── Success ── */
+    #success {
+      display: none;
+      background: #fff;
+      border-radius: 12px;
+      padding: 48px 32px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .check-icon {
+      width: 64px;
+      height: 64px;
+      background: #DCFCE7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 32px;
+    }
+    #success h3 { font-size: 20px; color: var(--navy); margin-bottom: 8px; }
+    #success p  { color: var(--muted); font-size: 14px; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 560px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .kpi-row   { grid-template-columns: 1fr 1fr; }
+      header { padding: 16px 20px; }
+      .form-section, .object-card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">THORN <span>IMMOBILIEN</span></div>
+    <div class="sub">Reservierungsformular</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Object summary card -->
+  <div class="object-card">
+    <div class="label">Ihr Investitionsobjekt</div>
+    <h2 id="disp-strasse">—</h2>
+    <div class="location" id="disp-location">—</div>
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Kaufpreis</div>
+        <div class="kpi-value gold" id="disp-kaufpreis">—</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Wohnungsnummer</div>
+        <div class="kpi-value" id="disp-wohnung">—</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Stellplatz</div>
+        <div class="kpi-value" id="disp-stellplatz">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">Ihre Angaben</div>
+
+  <!-- Form -->
+  <div class="form-section" id="form-wrap">
+    <h3>Käuferdaten</h3>
+    <form id="resForm">
+      <!-- Hidden: Objektdaten für E-Mail -->
+      <input type="hidden" name="_subject"      id="h-subject"    value="Neue Reservierung – Thorn Immobilien">
+      <input type="hidden" name="_template"     value="table">
+      <input type="hidden" name="_captcha"      value="false">
+      <input type="hidden" name="Objekt"        id="h-objekt"     value="">
+      <input type="hidden" name="Straße"        id="h-strasse"    value="">
+      <input type="hidden" name="PLZ_Ort"       id="h-plz"        value="">
+      <input type="hidden" name="Wohnungsnr"    id="h-wohnung"    value="">
+      <input type="hidden" name="Stellplatz"    id="h-stellplatz" value="">
+      <input type="hidden" name="Kaufpreis"     id="h-kaufpreis"  value="">
+
+      <div class="form-grid">
+        <div>
+          <label>Vorname *</label>
+          <input type="text" name="Vorname" required placeholder="Max">
+        </div>
+        <div>
+          <label>Nachname *</label>
+          <input type="text" name="Nachname" required placeholder="Mustermann">
+        </div>
+        <div class="full">
+          <label>Straße und Hausnummer *</label>
+          <input type="text" name="Adresse_Straße" required placeholder="Musterstraße 1">
+        </div>
+        <div>
+          <label>PLZ *</label>
+          <input type="text" name="Adresse_PLZ" required placeholder="68000" maxlength="5">
+        </div>
+        <div>
+          <label>Ort *</label>
+          <input type="text" name="Adresse_Ort" required placeholder="Mannheim">
+        </div>
+        <div class="full">
+          <label>E-Mail-Adresse *</label>
+          <input type="email" name="Email" required placeholder="max@beispiel.de">
+        </div>
+        <div class="full">
+          <label>Telefonnummer</label>
+          <input type="tel" name="Telefon" placeholder="+49 ">
+        </div>
+        <div class="full">
+          <label>Anmerkungen (optional)</label>
+          <textarea name="Anmerkungen" placeholder="Fragen oder Wünsche zur Reservierung…"></textarea>
+        </div>
+      </div>
+
+      <div class="consent">
+        <input type="checkbox" id="consent" required>
+        <label for="consent" style="font-weight:400; color: var(--muted);">
+          Ich stimme zu, dass Thorn Immobilien meine Angaben zur Bearbeitung der Reservierung verwendet.
+          Diese Einwilligung kann ich jederzeit widerrufen.
+        </label>
+      </div>
+
+      <button type="submit" class="btn-submit">Jetzt reservieren →</button>
+    </form>
+  </div>
+
+  <!-- Success state -->
+  <div id="success">
+    <div class="check-icon">✓</div>
+    <h3>Reservierung eingegangen!</h3>
+    <p>Wir melden uns in Kürze bei Ihnen.<br>Bei Fragen: <strong>info@thornimmobilien.de</strong></p>
+  </div>
+
+</main>
+
+<footer>
+  Thorn Immobilien GmbH · Karlsruhe · info@thornimmobilien.de<br>
+  Diese Reservierung ist rechtlich nicht bindend und dient zur Interessenbekundung.
+</footer>
+
+<script>
+  // ── 1. URL-Parameter lesen ──────────────────────────────────────────
+  const p = new URLSearchParams(window.location.search);
+
+  const objekt     = p.get('objekt')     || '';
+  const strasse    = p.get('strasse')    || '';
+  const plz_ort    = p.get('plz_ort')   || '';
+  const wohnung    = p.get('wohnung')    || '';
+  const stellplatz = p.get('stellplatz')|| '';
+  const kaufpreis  = p.get('kaufpreis') || '';
+
+  // ── 2. Karte befüllen ──────────────────────────────────────────────
+  document.getElementById('disp-strasse').textContent    = strasse    || 'Objekt';
+  document.getElementById('disp-location').textContent   = plz_ort    || '';
+  document.getElementById('disp-kaufpreis').textContent  = kaufpreis  || '—';
+  document.getElementById('disp-wohnung').textContent    = wohnung    || '—';
+  document.getElementById('disp-stellplatz').textContent = stellplatz || '—';
+
+  // ── 3. Hidden fields befüllen ─────────────────────────────────────
+  document.getElementById('h-subject').value    = `Neue Reservierung – ${strasse} ${wohnung}`;
+  document.getElementById('h-objekt').value     = objekt;
+  document.getElementById('h-strasse').value    = strasse;
+  document.getElementById('h-plz').value        = plz_ort;
+  document.getElementById('h-wohnung').value    = wohnung;
+  document.getElementById('h-stellplatz').value = stellplatz;
+  document.getElementById('h-kaufpreis').value  = kaufpreis;
+
+  // ── 4. Seitentitel ────────────────────────────────────────────────
+  if (strasse) document.title = `Reservierung – ${strasse} – Thorn Immobilien`;
+
+  // ── 5. Formular-Submission via Make.com Webhook ───────────────────
+  const WEBHOOK_URL = 'https://hook.eu1.make.com/fmlvgtfsh766b0c48em5883jiy5r81eo';
+
+  const form = document.getElementById('resForm');
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const btn = form.querySelector('.btn-submit');
+    btn.textContent = 'Wird gesendet…';
+    btn.disabled = true;
+
+    // Alle Formulardaten als JSON sammeln
+    const fd = new FormData(form);
+    const payload = {
+      // Objektdaten (aus URL-Parametern)
+      objekt:      objekt,
+      strasse:     strasse,
+      plz_ort:     plz_ort,
+      wohnung:     wohnung,
+      stellplatz:  stellplatz,
+      kaufpreis:   kaufpreis,
+      // Kundendaten (aus Formular)
+      vorname:     fd.get('Vorname'),
+      nachname:    fd.get('Nachname'),
+      adresse:     fd.get('Adresse_Straße'),
+      adresse_plz: fd.get('Adresse_PLZ'),
+      adresse_ort: fd.get('Adresse_Ort'),
+      email:       fd.get('Email'),
+      telefon:     fd.get('Telefon') || '',
+      anmerkungen: fd.get('Anmerkungen') || ''
+    };
+
+    fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(r => {
+      if (r.ok || r.status === 200) {
+        document.getElementById('form-wrap').style.display = 'none';
+        document.getElementById('success').style.display   = 'block';
+      } else {
+        throw new Error('Server error');
+      }
+    })
+    .catch(() => {
+      btn.textContent = 'Jetzt reservieren →';
+      btn.disabled = false;
+      alert('Fehler beim Senden. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt.');
+    });
+  });
+</script>
+
+</body>
+</html>
